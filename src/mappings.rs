@@ -29,7 +29,7 @@ lazy_static! {
         "2x2 Round" => BrickDesc::new("B_2x2_Round"),
         "2x2F Round" => BrickDesc::new("B_2x2F_Round"),
         "Pine Tree" => BrickDesc::new("B_Pine_Tree").offset((0, 0, -6)),
-        "2x2 Corner" => BrickDesc::new("B_2x2_Corner").rotation_offset(3),
+        "2x2 Corner" => BrickDesc::new("B_2x2_Corner").rotation_offset(0),
         "2x2 Octo Plate" => BrickDesc::new("B_2x2F_Octo"),
         "8x8 Grill" => BrickDesc::new("B_8x8_Lattice_Plate"),
         "1x4x2 Picket" => BrickDesc::new("B_Picket_Fence"),
@@ -234,8 +234,12 @@ lazy_static! {
                 let length: u32 = group.as_str().parse().ok()?;
                 y = length * 5;
             }
-
-            Some(vec![BrickDesc::new(asset).size((x, y, z)).rotation_offset(0)])
+            if neg && inv {
+                Some(vec![BrickDesc::new(asset).size((x, y, z)).rotation_offset(1)])
+            }
+            else {
+                Some(vec![BrickDesc::new(asset).size((x, y, z)).rotation_offset(0)])
+            }
         },
 
         r"(?P<angle>25|45)° Crest (?:(?P<end>End)|(?P<corner>Corner)|(?P<length>\d+)x)" => |captures, _| {
@@ -261,8 +265,8 @@ lazy_static! {
         },
 
         r"^(\d+)x(\d+)F Tile$" => |captures, _| {
-            let width: u32 = captures.get(1).unwrap().as_str().parse().ok()?;
-            let length: u32 = captures.get(2).unwrap().as_str().parse().ok()?;
+            let length: u32 = captures.get(1).unwrap().as_str().parse().ok()?;
+            let width: u32 = captures.get(2).unwrap().as_str().parse().ok()?;
             Some(vec![BrickDesc::new("PB_DefaultTile").size((width * 5, length * 5, 2))])
         },
         r"^(\d+)x(\d+) Base$" => |captures, _| {
